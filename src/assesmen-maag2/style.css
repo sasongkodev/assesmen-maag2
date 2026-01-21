@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@source "../**/*.{js,jsx,ts,tsx}";
+
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+.font-poppins {
+	font-family: 'Poppins', sans-serif;
+}
+
+.wp-block-create-block-assesmen-maag2 {
+	background-color: transparent;
+	color: inherit;
+	padding: 0;
+}
