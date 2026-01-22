@@ -8,7 +8,7 @@ import {
     Input, Stack, InputGroup, InputRightElement, Wrap, WrapItem, Alert, AlertIcon
 } from '@chakra-ui/react';
 import apiFetch from '@wordpress/api-fetch';
-import { DeleteIcon, ViewIcon, AddIcon } from '@chakra-ui/icons';
+import { DeleteIcon, ViewIcon, AddIcon, DownloadIcon } from '@chakra-ui/icons';
 
 const VisualEditor = ({ questions, onChange, onSave }) => {
     // Helper to update a section
@@ -220,6 +220,57 @@ const DashboardContent = () => {
         }
     };
 
+    const handleExport = () => {
+        if (!submissions || submissions.length === 0) {
+            toast({ title: 'Tidak ada data untuk diexport', status: 'warning' });
+            return;
+        }
+
+        // 1. Define Headers (Human Readable)
+        const headers = [
+            'Tanggal',
+            'Nama Lengkap',
+            'Email',
+            'Nomor Telepon',
+            'Usia',
+            'Jenis Kelamin',
+            'Pekerjaan',
+            'Skor (%)',
+            'Level Risiko'
+        ];
+
+        // 2. Format Data Rows
+        const rows = submissions.map(sub => [
+            new Date(sub.created_at).toLocaleDateString('id-ID'), // Localized Date
+            `"${sub.name || ''}"`, // Quote to handle commas
+            sub.email || '',
+            `'${sub.phone || ''}`, // Force text format for phone numbers in Excel
+            sub.age || '',
+            sub.gender === 'male' ? 'Laki-laki' : sub.gender === 'female' ? 'Perempuan' : sub.gender,
+            sub.occupation || '',
+            sub.score || '0',
+            sub.risk_level === 'HIGH' ? 'Tinggi (Berbahaya)' :
+                sub.risk_level === 'MODERATE' ? 'Sedang (Waspada)' : 'Rendah (Stabil)'
+        ]);
+
+        // 3. Combine to CSV String
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(row => row.join(','))
+        ].join('\n');
+
+        // 4. Trigger Download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `Data_Asesmen_Maag_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const openDetail = (sub) => {
         setSelectedSubmission(sub);
         onOpen();
@@ -229,7 +280,14 @@ const DashboardContent = () => {
         <Box bg="white" p={8} borderRadius="lg" boxShadow="sm">
             <Flex justifyContent="space-between" alignItems="center" mb={6}>
                 <Heading size="lg" color="pink.600">Assesmen Maag Dashboard</Heading>
-                <Button onClick={fetchSubmissions} size="sm">Refresh Data</Button>
+                <Box>
+                    <Button onClick={handleExport} leftIcon={<DownloadIcon />} colorScheme="green" size="sm" mr={2}>
+                        Export Excel
+                    </Button>
+                    <Button onClick={fetchSubmissions} size="sm" variant="outline" colorScheme="pink">
+                        Refresh Data
+                    </Button>
+                </Box>
             </Flex>
 
             <Tabs colorScheme="pink" variant="enclosed">

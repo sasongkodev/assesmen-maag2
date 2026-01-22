@@ -8,8 +8,8 @@ const AssessmentQuiz = ({ userData, onComplete }) => {
     const [answers, setAnswers] = useState({}); // Answers state
 
     useEffect(() => {
-        // Fetch dynamic questions
-        apiFetch({ path: '/assesmen-maag2/v1/questions' })
+        // Fetch dynamic questions with cache busting
+        apiFetch({ path: `/assesmen-maag2/v1/questions?_t=${Date.now()}` })
             .then(data => {
                 if (data && Array.isArray(data)) {
                     setSections(data);
@@ -124,31 +124,31 @@ const AssessmentQuiz = ({ userData, onComplete }) => {
             </div>
 
             {/* Questions Card */}
-            <div className="bg-white rounded-[32px] shadow-[0_20px_60px_rgba(236,72,153,0.15)] p-8 md:p-12 border border-pink-50 relative overflow-hidden">
+            <div className="bg-white rounded-[32px] shadow-[0_20px_60px_rgba(236,72,153,0.15)] p-6 md:p-12 border border-pink-50 relative overflow-hidden">
                 {/* Decorative blob */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-pink-50 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-                <div className="relative z-10 space-y-10">
+                <div className="relative z-10 space-y-12">
                     {currentSectionData.questions.map((question, index) => (
                         <div key={question.id} className="animate-fadeIn">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-start gap-2">
-                                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-pink-100 text-pink-600 text-xs flex items-center justify-center mt-0.5">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-start gap-3">
+                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-pink-100 text-pink-600 font-bold text-sm flex items-center justify-center shadow-sm">
                                     {index + 1}
                                 </span>
-                                {question.text}
+                                <span className="pt-1">{question.text}</span>
                             </h3>
 
                             {currentSectionData.id === 'F' ? (
                                 // Special handling for Red Flags (Checklist)
-                                <div className="grid gap-3">
+                                <div className="grid gap-4 md:gap-5">
                                     {question.options.map(option => (
                                         <label
                                             key={option}
                                             className={`
-                                                relative flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200
+                                                relative flex items-center p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ease-out group
                                                 ${answers.red_flags?.includes(option)
-                                                    ? 'border-red-500 bg-red-50 text-red-700 shadow-sm'
-                                                    : 'border-gray-100 hover:border-pink-200 hover:bg-pink-50/50 text-gray-600'}
+                                                    ? 'border-red-500 bg-red-50/80 text-red-700 shadow-md translate-x-1'
+                                                    : 'border-gray-100 hover:border-pink-300 hover:bg-pink-50/30 hover:shadow-md hover:-translate-y-0.5 text-gray-600'}
                                             `}
                                         >
                                             <input
@@ -158,29 +158,29 @@ const AssessmentQuiz = ({ userData, onComplete }) => {
                                                 onChange={() => handleRedFlagChange(option)}
                                             />
                                             <div className={`
-                                                w-5 h-5 rounded border flex items-center justify-center mr-3 transition-colors
+                                                w-6 h-6 rounded-lg border-2 flex items-center justify-center mr-4 transition-all duration-300
                                                 ${answers.red_flags?.includes(option)
-                                                    ? 'bg-red-500 border-red-500 text-white'
-                                                    : 'border-gray-300 bg-white'}
+                                                    ? 'bg-red-500 border-red-500 text-white scale-110'
+                                                    : 'border-gray-300 bg-white group-hover:border-pink-300'}
                                             `}>
                                                 {answers.red_flags?.includes(option) && (
-                                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                                                     </svg>
                                                 )}
                                             </div>
-                                            <span className="font-medium">{option}</span>
+                                            <span className="font-medium text-lg">{option}</span>
                                         </label>
                                     ))}
 
-                                    <div className="my-2 border-t border-gray-100" />
+                                    <div className="my-4 border-t border-gray-100" />
 
                                     <label
                                         className={`
-                                            relative flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200
+                                            relative flex items-center p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ease-out group
                                             ${answers.red_flags?.includes(question.exclusiveOption)
-                                                ? 'border-green-500 bg-green-50 text-green-700 shadow-sm'
-                                                : 'border-gray-100 hover:border-green-200 hover:bg-green-50/50 text-gray-600'}
+                                                ? 'border-green-500 bg-green-50 text-green-700 shadow-md translate-x-1'
+                                                : 'border-gray-100 hover:border-green-300 hover:bg-green-50/30 hover:shadow-md hover:-translate-y-0.5 text-gray-600'}
                                         `}
                                     >
                                         <input
@@ -190,31 +190,31 @@ const AssessmentQuiz = ({ userData, onComplete }) => {
                                             onChange={() => handleRedFlagChange(question.exclusiveOption)}
                                         />
                                         <div className={`
-                                            w-5 h-5 rounded-full border flex items-center justify-center mr-3 transition-colors
+                                            w-6 h-6 rounded-full border-2 flex items-center justify-center mr-4 transition-all duration-300
                                             ${answers.red_flags?.includes(question.exclusiveOption)
-                                                ? 'bg-green-500 border-green-500 text-white'
-                                                : 'border-gray-300 bg-white'}
+                                                ? 'bg-green-500 border-green-500 text-white scale-110'
+                                                : 'border-gray-300 bg-white group-hover:border-green-300'}
                                         `}>
                                             {answers.red_flags?.includes(question.exclusiveOption) && (
-                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                                                 </svg>
                                             )}
                                         </div>
-                                        <span className="font-medium">{question.exclusiveOption}</span>
+                                        <span className="font-medium text-lg">{question.exclusiveOption}</span>
                                     </label>
                                 </div>
                             ) : (
                                 // Standard Options (Radio)
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
                                     {question.options.map(option => (
                                         <label
                                             key={option}
                                             className={`
-                                                relative flex items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 text-center
+                                                relative flex items-center p-6 rounded-2xl border-2 cursor-pointer transition-all duration-300 ease-out group text-left
                                                 ${answers[question.id] === option
-                                                    ? 'border-pink-500 bg-pink-50 text-pink-700 shadow-md transform scale-[1.02]'
-                                                    : 'border-gray-100 hover:border-pink-200 hover:bg-pink-50/30 text-gray-600'}
+                                                    ? 'border-pink-500 bg-gradient-to-br from-pink-50 to-white text-pink-700 shadow-xl ring-2 ring-pink-100 ring-offset-2'
+                                                    : 'border-gray-100 hover:border-pink-200 hover:bg-white hover:shadow-lg hover:-translate-y-1 text-gray-500'}
                                             `}
                                         >
                                             <input
@@ -225,7 +225,24 @@ const AssessmentQuiz = ({ userData, onComplete }) => {
                                                 onChange={(e) => handleAnswer(currentSectionData.id, question.id, e.target.value)}
                                                 className="hidden"
                                             />
-                                            <span className="font-medium">{option}</span>
+
+                                            {/* Radio Circle / Check Indicator */}
+                                            <div className={`
+                                                w-6 h-6 rounded-full border-2 flex items-center justify-center mr-4 flex-shrink-0 transition-all duration-300
+                                                ${answers[question.id] === option
+                                                    ? 'border-pink-500 bg-pink-500 text-white scale-110'
+                                                    : 'border-gray-200 group-hover:border-pink-300'}
+                                            `}>
+                                                {answers[question.id] === option && (
+                                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                )}
+                                            </div>
+
+                                            <span className={`font-semibold text-lg transition-colors ${answers[question.id] === option ? 'text-pink-700' : 'group-hover:text-pink-600'}`}>
+                                                {option}
+                                            </span>
                                         </label>
                                     ))}
                                 </div>

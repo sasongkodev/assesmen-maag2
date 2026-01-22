@@ -1,9 +1,15 @@
 import { __ } from '@wordpress/i18n';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import AssessmentQuiz from './AssessmentQuiz';
 import AssessmentResult from './AssessmentResult';
 
 export default function AssessmentFront() {
+    // Hide WordPress Page Title
+    useEffect(() => {
+        const titles = document.querySelectorAll('.entry-title, .page-title, .wp-block-post-title');
+        titles.forEach(title => title.style.display = 'none');
+    }, []);
+
     const [isFocused, setIsFocused] = useState(null);
     const [step, setStep] = useState('registration'); // registration, transition, quiz, results
     const [formData, setFormData] = useState({
@@ -199,7 +205,7 @@ export default function AssessmentFront() {
                 <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-pink-400 rounded-full blur-3xl opacity-20" />
 
                 {/* Header */}
-                <div className="relative p-8 md:p-10 text-center">
+                <div className="relative p-6 md:p-10 text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 text-white shadow-lg mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -207,7 +213,7 @@ export default function AssessmentFront() {
                     </div>
 
                     <h2 className="text-3xl md:text-[32px] font-extrabold text-gray-900 mb-3 tracking-tight">
-                        {__('Form Pendaftaran Asesmen Maag', 'assesmen-maag2')}
+                        {__('Form Kuis Asesmen Maag', 'assesmen-maag2')}
                     </h2>
                     <p className="text-gray-500 text-[17px] leading-relaxed">
                         {__('Isi data diri Anda dengan lengkap untuk memulai asesmen kesehatan lambung yang personal.', 'assesmen-maag2')}
@@ -484,19 +490,10 @@ export default function AssessmentFront() {
                 </form>
 
                 {/* Footer */}
-                <div className="bg-gradient-to-r from-pink-50 to-pink-100 px-8 py-4 text-center border-t border-pink-100">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div className="flex items-center gap-2 text-pink-600 text-sm font-semibold">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                            {__('ISO 27001 Certified', 'assesmen-maag2')}
-                        </div>
-
-                        <p className="text-pink-600 text-sm font-semibold tracking-wide">
-                            {__('© 2024 Asesmen Maag. Hak Cipta Dilindungi.', 'assesmen-maag2')}
-                        </p>
-                    </div>
+                <div className="bg-gradient-to-r from-pink-50 to-pink-100 px-8 py-6 text-center border-t border-pink-100">
+                    <p className="text-pink-600 text-sm font-semibold tracking-wide">
+                        &copy; {new Date().getFullYear()} Maagify. {__('Hak Cipta Dilindungi.', 'assesmen-maag2')}
+                    </p>
                 </div>
             </div>
         </div>
